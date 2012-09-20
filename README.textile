@@ -1,0 +1,30 @@
+h1. Introduction
+
+This is a php port of my geotools project, which was written in Java. This is my first attempt at doing anything in php so, beware minor code issues resulting from that.
+
+phpunit tests are provided.
+
+Simply copy the php file into your project to get started. 
+
+h1. Features
+
+* GeoGeometry class with methods that allow you to:
+** Calculate distance between two coordinates using the haversine algorithm.
+** check bounding box containment for a point
+** check polygon containment for a point
+** get the center for a polygon
+** get bounding box for a polygon
+** convert circle to a polygon
+** create a polygon from a point cloud
+** translate a wgs84 coordinate by x & y meters along the latitude and longitude
+* GeoHashUtils class with methods that allow you to: 
+** encode and decode geo hashes; this functionality has been adapted from the original Apache Lucene implementation of this class.
+** check containment of a point in a geohash
+** find out the boundingbox of a geohash
+** find out neighboring geohashes east, west, south, or north of a geohash
+** get the 32 sub geo hashes for a geohash, or the north/south halves, or the NE, NW, SE, SW quarters.
+** cover lines, paths, polygons, or circles with geo hashes
+
+h1. Changelog
+
+* this code has not been released yet
