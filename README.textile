@@ -18,7 +18,7 @@ h1. Features
 ** create a polygon from a point cloud
 ** translate a wgs84 coordinate by x & y meters along the latitude and longitude
 * GeoHashUtils class with methods that allow you to: 
-** encode and decode geo hashes; this functionality has been adapted from the original Apache Lucene implementation of this class.
+** encode and decode geo hashes
 ** check containment of a point in a geohash
 ** find out the boundingbox of a geohash
 ** find out neighboring geohashes east, west, south, or north of a geohash
