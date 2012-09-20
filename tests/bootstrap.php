@@ -22,7 +22,7 @@
  */
 set_include_path(dirname(__FILE__) . '/../' . PATH_SEPARATOR . get_include_path());
 
-require_once './GeoHash.php';
+require_once './GeoTools.php';
 
 //Register non-Slim autoloader
 function customAutoLoader( $class ) {
