@@ -99,8 +99,6 @@ class GeoGeometry {
 
 		$lastLatitude = $polygonPoints[sizeof($polygonPoints) - 1][0];
 		$lastLongitude = $polygonPoints[sizeof($polygonPoints) - 1][1];
-		// $currentLatitude;
-		// $currentLongitude;
 
 		// Walk the edges of the polygon
 		for ($i = 0; $i < sizeof($polygonPoints); $lastLatitude = $currentLatitude, $lastLongitude = $currentLongitude, $i++) {
@@ -124,7 +122,6 @@ class GeoGeometry {
 				$leftLatitude = $lastLatitude;
 			}
 
-			// double test1, test2;
 			if ($currentLongitude < $lastLongitude) {
 				if ($longitude < $currentLongitude || $longitude >= $lastLongitude) {
 					continue;
@@ -322,51 +319,51 @@ class GeoGeometry {
 		}
 	}
 
-    /**
-     * Converts a circle to a polygon.
-     *
-     * @param segments
-     *            number of segments the polygon should have. The higher this
-     *            number, the better of an approximation the polygon is for the
-     *            circle.
-     * @param latitude
-     * @param longitude
-     * @param radius
-     * @return an array of the points [latitude,longitude] that make up the
-     *         polygon.
-     */
-    function circle2polygon($segments, $latitude, $longitude, $radius) {
-        if ($segments < 5) {
-            throw new InvalidArgumentException("you need a minimum of 5 segments");
-        }
-        // for n segments you need n+1 points
-        $points = array();
+	/**
+	 * Converts a circle to a polygon.
+	 *
+	 * @param segments
+	 *            number of segments the polygon should have. The higher this
+	 *            number, the better of an approximation the polygon is for the
+	 *            circle.
+	 * @param latitude
+	 * @param longitude
+	 * @param radius
+	 * @return an array of the points [latitude,longitude] that make up the
+	 *         polygon.
+	 */
+	function circle2polygon($segments, $latitude, $longitude, $radius) {
+		if ($segments < 5) {
+			throw new InvalidArgumentException("you need a minimum of 5 segments");
+		}
+		// for n segments you need n+1 points
+		$points = array();
 
-        $relativeLatitude = $radius / $this->EARTH_RADIUS_METERS * 180 / pi();
-        $relativeLongitude = $relativeLatitude / cos($this->toRadians($latitude));
+		$relativeLatitude = $radius / $this -> EARTH_RADIUS_METERS * 180 / pi();
+		$relativeLongitude = $relativeLatitude / cos($this -> toRadians($latitude));
 
-        for ($i = 0; $i < $segments + 1; $i++) {
-            // radians go from 0 to 2*PI; we want to divide the circle in nice
-            // segments
-            $theta = 2 * pi() * $i / $segments;
+		for ($i = 0; $i < $segments + 1; $i++) {
+			// radians go from 0 to 2*PI; we want to divide the circle in nice
+			// segments
+			$theta = 2 * pi() * $i / $segments;
 
-            // on the unit circle, any point of the circle has the coordinate
-            // cos(t),sin(t) where t is the radian. So, all we need to do that
-            // is multiply that with the relative latitude and longitude
-            // note, latitude takes the role of y, not x. By convention we
-            // always note latitude, longitude instead of the other way around
-            $latOnCircle = $latitude + $relativeLatitude * sin($theta);
-            $lonOnCircle = $longitude + $relativeLongitude * cos($theta);
-            if ($lonOnCircle > 180) {
-                $lonOnCircle = -180 + ($lonOnCircle - 180);
-            } else if ($lonOnCircle < -180) {
-                $lonOnCircle = 180 - ($lonOnCircle + 180);
-            }
+			// on the unit circle, any point of the circle has the coordinate
+			// cos(t),sin(t) where t is the radian. So, all we need to do that
+			// is multiply that with the relative latitude and longitude
+			// note, latitude takes the role of y, not x. By convention we
+			// always note latitude, longitude instead of the other way around
+			$latOnCircle = $latitude + $relativeLatitude * sin($theta);
+			$lonOnCircle = $longitude + $relativeLongitude * cos($theta);
+			if ($lonOnCircle > 180) {
+				$lonOnCircle = -180 + ($lonOnCircle - 180);
+			} else if ($lonOnCircle < -180) {
+				$lonOnCircle = 180 - ($lonOnCircle + 180);
+			}
 
-            array_push($points, array($latOnCircle, $lonOnCircle));
-        }
-        return $points;
-    }
+			array_push($points, array($latOnCircle, $lonOnCircle));
+		}
+		return $points;
+	}
 
 }
 
@@ -744,7 +741,7 @@ class GeoHash {
 		return $fullyContained;
 	}
 
-	function splitAndFilter($polygonPoints, $fullyContained, $partiallyContained) {
+	private function splitAndFilter($polygonPoints, $fullyContained, $partiallyContained) {
 		$stillPartial = array();
 		// now we need to break up the partially contained hashes
 		foreach ($partiallyContained as $hash) {
@@ -759,24 +756,23 @@ class GeoHash {
 				} else if ($nw || $ne || $sw || $se) {
 					array_push($stillPartial, $h);
 				} else {
-                    $last = $polygonPoints[0];
-                    for($i=1; $i<sizeof($polygonPoints);$i++) {
-                        $current=$polygonPoints[$i];
-                        if($this->geogeometry->linesCross($hashBbox[0], $hashBbox[2], $hashBbox[0], $hashBbox[3], $last[0], $last[1], $current[0], $current[1])) {
-                            array_push($stillPartial,$h);
-                            break;
-                        } else if($this->geogeometry->linesCross($hashBbox[0], $hashBbox[3], $hashBbox[1], $hashBbox[3], $last[0], $last[1], $current[0], $current[1])) {
-                            array_push($stillPartial,$h);
-                            break;
-                        } else if($this->geogeometry->linesCross($hashBbox[1], $hashBbox[3], $hashBbox[1], $hashBbox[2], $last[0], $last[1], $current[0], $current[1])) {
-                            array_push($stillPartial,$h);
-                            break;
-                        } else if($this->geogeometry->linesCross($hashBbox[1], $hashBbox[2], $hashBbox[0], $hashBbox[2], $last[0], $last[1], $current[0], $current[1])) {
-                            array_push($stillPartial,$h);
-                            break;
-                        }
-                    }
-
+					$last = $polygonPoints[0];
+					for ($i = 1; $i < sizeof($polygonPoints); $i++) {
+						$current = $polygonPoints[$i];
+						if ($this -> geogeometry -> linesCross($hashBbox[0], $hashBbox[2], $hashBbox[0], $hashBbox[3], $last[0], $last[1], $current[0], $current[1])) {
+							array_push($stillPartial, $h);
+							break;
+						} else if ($this -> geogeometry -> linesCross($hashBbox[0], $hashBbox[3], $hashBbox[1], $hashBbox[3], $last[0], $last[1], $current[0], $current[1])) {
+							array_push($stillPartial, $h);
+							break;
+						} else if ($this -> geogeometry -> linesCross($hashBbox[1], $hashBbox[3], $hashBbox[1], $hashBbox[2], $last[0], $last[1], $current[0], $current[1])) {
+							array_push($stillPartial, $h);
+							break;
+						} else if ($this -> geogeometry -> linesCross($hashBbox[1], $hashBbox[2], $hashBbox[0], $hashBbox[2], $last[0], $last[1], $current[0], $current[1])) {
+							array_push($stillPartial, $h);
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -899,22 +895,22 @@ class GeoHash {
 	}
 
 	function geoHashesForCircle($length, $latitude, $longitude, $radius) {
-	// bit of a wet finger approach here: it doesn't make much sense to have
-	// lots of segments unless we have a long geohash or a large radius
-	$segments;
-	if($length > $this->getSuitableHashLength($radius)-3) {
-	$segments=200;
-	} else if($length > $this->getSuitableHashLength($radius)-2) {
-	$segments=100;
-	} else if($length > $this->getSuitableHashLength($radius)-1) {
-	$segments=50;
-	} else {
-	// we don't seem to care about detail
-	$segments=10;
-	}
-	
-	$circle2polygon = $this->geogeometry->circle2polygon($segments, $latitude, $longitude, $radius);
-	return $this->getGeoHashesForPolygon($length, $circle2polygon);
+		// bit of a wet finger approach here: it doesn't make much sense to have
+		// lots of segments unless we have a long geohash or a large radius
+		$segments;
+		if ($length > $this -> getSuitableHashLength($radius) - 3) {
+			$segments = 200;
+		} else if ($length > $this -> getSuitableHashLength($radius) - 2) {
+			$segments = 100;
+		} else if ($length > $this -> getSuitableHashLength($radius) - 1) {
+			$segments = 50;
+		} else {
+			// we don't seem to care about detail
+			$segments = 10;
+		}
+
+		$circle2polygon = $this -> geogeometry -> circle2polygon($segments, $latitude, $longitude, $radius);
+		return $this -> getGeoHashesForPolygon($length, $circle2polygon);
 	}
 
 }

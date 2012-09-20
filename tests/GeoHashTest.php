@@ -126,68 +126,66 @@ class GeoHashTest extends PHPUnit_Framework_TestCase {
 		$this -> assertEquals(round($this -> geogeometry -> distance($this -> berlin, $this -> sydney)), 16095663.0);
 	}
 
-    function testShouldCheckThatLinesCross() {
-        $this -> assertTrue($this->geogeometry->linesCross(1, 1, 2, 2, 1, 2, 2, 1));
-        $this -> assertTrue($this->geogeometry->linesCross(1, 1, 1, 10, 1, 3, 1, 4));
-        $this -> assertTrue($this->geogeometry->linesCross(1, 666, 10, 666, 3, 666, 4, 666));
-    }
+	function testShouldCheckThatLinesCross() {
+		$this -> assertTrue($this -> geogeometry -> linesCross(1, 1, 2, 2, 1, 2, 2, 1));
+		$this -> assertTrue($this -> geogeometry -> linesCross(1, 1, 1, 10, 1, 3, 1, 4));
+		$this -> assertTrue($this -> geogeometry -> linesCross(1, 666, 10, 666, 3, 666, 4, 666));
+	}
 
-    function testShouldCheckThatLinesDontCross() {
-        $this -> assertFalse($this->geogeometry->linesCross(1, 2, 3, 4, 10, 20, 20, 10));
-        $this -> assertFalse($this->geogeometry->linesCross(1, 1, 2, 2, 2, 2, 3, 3));
-        $this -> assertFalse($this->geogeometry->linesCross(1, 1, 1, 5, 1, 6, 1, 10));
-        $this -> assertFalse($this->geogeometry->linesCross(1, 666, 5, 666, 6, 666, 10, 666));
-    }
+	function testShouldCheckThatLinesDontCross() {
+		$this -> assertFalse($this -> geogeometry -> linesCross(1, 2, 3, 4, 10, 20, 20, 10));
+		$this -> assertFalse($this -> geogeometry -> linesCross(1, 1, 2, 2, 2, 2, 3, 3));
+		$this -> assertFalse($this -> geogeometry -> linesCross(1, 1, 1, 5, 1, 6, 1, 10));
+		$this -> assertFalse($this -> geogeometry -> linesCross(1, 666, 5, 666, 6, 666, 10, 666));
+	}
 
-    
-    function testShouldCheckIsEastWestNorthSouth() {
-        $this -> assertTrue($this->geohash->isWest($this->berlin[1], $this->sydney[1]));
-        $this -> assertTrue($this->geohash->isEast($this->sydney[1], $this->berlin[1]));
-        $this -> assertTrue($this->geohash->isNorth($this->berlin[0], $this->sydney[0]));
-        $this -> assertTrue($this->geohash->isSouth($this->sydney[0], $this->berlin[0]));
-    }        
-    
-    function testShouldReturnSuitableLength() {
-        $this->assertEquals(4, $this->geohash->getSuitableHashLength(11000));
-    }
-    
-    function testShouldReturn32SubHashes() {
-        $hashes = $this->geohash->subHashes('abc');
-        $this->assertEquals(32, sizeof($hashes));
-        foreach($hashes as $hash) {
-            $this->assertEquals(4, strlen($hash));
-        }
-    }
-    
-    function xtestShouldCalculateHashesForPolygon() {
-        $min = 10;
-        $polygon = array( array(-1,1), array( 2, 2 ), array( 3, -1 ),
-            array( -2, -4 ) );
-        $geoHashesForPolygon = $this->geohash->getGeoHashesForPolygon(5, $polygon);
-        foreach ($geoHashesForPolygon as $h ) {
-            $min = min($min, strlen($h));
-        }
-        $this->assertEquals(3, $min);
-        $this -> assertTrue(sizeof($geoHashesForPolygon) > 1000);
-    }
-    
-    function testShouldCaclulateHashesForLine() {
-        $hashes = $this->geohash->geoHashesForLine(5, 1.0, 1.0, 1.0, 2.0);
-        $this -> assertTrue(sizeof($hashes) > 1);
-        // TODO improve test
-    }
-    
-    function testShouldConvertCircleToPolygonOn180() {
-        $circle2polygon = $this->geogeometry->circle2polygon(6, -18, 180, 1000);
-        $countEast=0;
-        foreach ($circle2polygon as $point) {
-            $distance = $this->geogeometry->distance(array(-18, 180),array($point[0],$point[1]));
-            $this -> assertTrue(abs(1000-$distance)<1.0);
-            if($this->geohash->isWest(180, $point[1])) {
-                $countEast++;
-            }
-        }
-        $this -> assertTrue($countEast>1);
-    }
+	function testShouldCheckIsEastWestNorthSouth() {
+		$this -> assertTrue($this -> geohash -> isWest($this -> berlin[1], $this -> sydney[1]));
+		$this -> assertTrue($this -> geohash -> isEast($this -> sydney[1], $this -> berlin[1]));
+		$this -> assertTrue($this -> geohash -> isNorth($this -> berlin[0], $this -> sydney[0]));
+		$this -> assertTrue($this -> geohash -> isSouth($this -> sydney[0], $this -> berlin[0]));
+	}
+
+	function testShouldReturnSuitableLength() {
+		$this -> assertEquals(4, $this -> geohash -> getSuitableHashLength(11000));
+	}
+
+	function testShouldReturn32SubHashes() {
+		$hashes = $this -> geohash -> subHashes('abc');
+		$this -> assertEquals(32, sizeof($hashes));
+		foreach ($hashes as $hash) {
+			$this -> assertEquals(4, strlen($hash));
+		}
+	}
+
+	function xtestShouldCalculateHashesForPolygon() {
+		$min = 10;
+		$polygon = array( array(-1, 1), array(2, 2), array(3, -1), array(-2, -4));
+		$geoHashesForPolygon = $this -> geohash -> getGeoHashesForPolygon(5, $polygon);
+		foreach ($geoHashesForPolygon as $h) {
+			$min = min($min, strlen($h));
+		}
+		$this -> assertEquals(3, $min);
+		$this -> assertTrue(sizeof($geoHashesForPolygon) > 1000);
+	}
+
+	function testShouldCaclulateHashesForLine() {
+		$hashes = $this -> geohash -> geoHashesForLine(5, 1.0, 1.0, 1.0, 2.0);
+		$this -> assertTrue(sizeof($hashes) > 1);
+		// TODO improve test
+	}
+
+	function testShouldConvertCircleToPolygonOn180() {
+		$circle2polygon = $this -> geogeometry -> circle2polygon(6, -18, 180, 1000);
+		$countEast = 0;
+		foreach ($circle2polygon as $point) {
+			$distance = $this -> geogeometry -> distance(array(-18, 180), array($point[0], $point[1]));
+			$this -> assertTrue(abs(1000 - $distance) < 1.0);
+			if ($this -> geohash -> isWest(180, $point[1])) {
+				$countEast++;
+			}
+		}
+		$this -> assertTrue($countEast > 1);
+	}
 }
 ?>
