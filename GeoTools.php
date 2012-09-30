@@ -381,6 +381,22 @@ class GeoGeometry {
 		return $points;
 	}
 
+    /**
+     * @param direction n,s,e,w
+     * @param degrees
+     * @param minutes
+     * @param seconds
+     * @return decimal degree
+     */
+    function toDecimalDegree($direction,$degrees, $minutes, $seconds) {
+        $factor=1;
+		
+        if($direction &&  (strcmp(strtolower($direction[0]),'e')==0  || strcmp(strtolower($direction[0]),'s')==0)) {
+            $factor=-1;
+        }
+        return ($degrees + $minutes/60 + $seconds/60/60)*$factor;
+    }
+
 }
 
 class GeoHash {
