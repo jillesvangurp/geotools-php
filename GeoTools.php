@@ -322,6 +322,7 @@ class GeoGeometry {
 	/**
 	 * Converts a circle to a polygon.
 	 *
+	 * Note. this function does not work well near the poles.
 	 * @param segments
 	 *            number of segments the polygon should have. The higher this
 	 *            number, the better of an approximation the polygon is for the
@@ -340,12 +341,19 @@ class GeoGeometry {
 		$points = array();
 
 		$relativeLatitude = $radius / $this -> EARTH_RADIUS_METERS * 180 / pi();
-		$relativeLongitude = $relativeLatitude / cos($this -> toRadians($latitude));
+        // things get funny near the north and south pole, so doing a modulo 90
+        // to ensure that the relative amount of degrees doesn't get too crazy.		
+        // modulo seems to work different in php than in Java (no support for doubles using the operator)
+		$relativeLongitude = fmod($relativeLatitude / cos($this -> toRadians($latitude)), 90);		
 
-		for ($i = 0; $i < $segments + 1; $i++) {
+		for ($i = 0; $i < $segments; $i++) {
 			// radians go from 0 to 2*PI; we want to divide the circle in nice
 			// segments
 			$theta = 2 * pi() * $i / $segments;
+			$theta=$theta+=0.1;
+            if($theta>= 2*pi()) {
+                $theta=$theta-2*pi();
+            }
 
 			// on the unit circle, any point of the circle has the coordinate
 			// cos(t),sin(t) where t is the radian. So, all we need to do that
@@ -359,9 +367,17 @@ class GeoGeometry {
 			} else if ($lonOnCircle < -180) {
 				$lonOnCircle = 180 - ($lonOnCircle + 180);
 			}
+			
+            if($latOnCircle > 90) {
+                $latOnCircle = 90 - ($latOnCircle-90);
+            } else if($latOnCircle < -90) {
+                $latOnCircle = -90 - ($latOnCircle+90);
+            }
 
 			array_push($points, array($latOnCircle, $lonOnCircle));
 		}
+		// should end with same point as the origin
+        array_push($points, array($points[0][0],$points[0][1]));
 		return $points;
 	}
 
