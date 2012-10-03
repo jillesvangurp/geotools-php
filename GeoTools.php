@@ -686,27 +686,20 @@ class GeoHash {
 	 * @param granularityInMeters
 	 * @return a length between 2 and 10.
 	 */
-	function getSuitableHashLength($granularityInMeters) {
-		if ($granularityInMeters < 1) {
-			$hashLength = 10;
-		} else if ($granularityInMeters < 5) {
-			$hashLength = 9;
-		} else if ($granularityInMeters < 50) {
-			$hashLength = 8;
-		} else if ($granularityInMeters < 200) {
-			$hashLength = 7;
-		} else if ($granularityInMeters < 1500) {
-			$hashLength = 6;
-		} else if ($granularityInMeters < 10000) {
-			$hashLength = 5;
-		} else if ($granularityInMeters < 50000) {
-			$hashLength = 4;
-		} else if ($granularityInMeters < 200000) {
-			$hashLength = 3;
-		} else {
-			$hashLength = 2;
+	function getSuitableHashLength($granularityInMeters, $latitude, $longitude) {
+		if($granularityInMeters < 5) {
+			return 10;
 		}
-		return $hashLength;
+		$hash = $this->encode($latitude, $longitude);
+		$width=0;
+		$length=strlen($hash);
+		while($width < $granularityInMeters && strlen($hash) >=2) {
+			$length=strlen($hash);
+			$bbox = $this->decodeToBbox($hash);
+			$width=$this->geogeometry->distance(array($bbox[0],$bbox[2]), array($bbox[0],$bbox[3]));
+			$hash=substr($hash, 0,strlen($hash)-1);
+		}
+		return min($length+1, 12);
 	}
 
 	/**
@@ -728,7 +721,7 @@ class GeoHash {
 		$bbox = $this -> geogeometry -> polygonToBbox($polygonPoints);
 		// first lets figure out an appropriate geohash length
 		$diagonal = $this -> geogeometry -> distance(array($bbox[0], $bbox[2]), array($bbox[1], $bbox[3]));
-		$hashLength = $this -> getSuitableHashLength($diagonal);
+		$hashLength = $this -> getSuitableHashLength($diagonal,$bbox[0], $bbox[2]);
 
 		$partiallyContained = array();
 		// now lets generate all geohashes for the containing bounding box
@@ -930,11 +923,12 @@ class GeoHash {
 		// bit of a wet finger approach here: it doesn't make much sense to have
 		// lots of segments unless we have a long geohash or a large radius
 		$segments;
-		if ($length > $this -> getSuitableHashLength($radius) - 3) {
+		$suitableLength=getSuitableHashLength($radius,$latitude, $longitude);
+		if($length > $suitableLength - 3) {
 			$segments = 200;
-		} else if ($length > $this -> getSuitableHashLength($radius) - 2) {
+		} else if ($length > $suitableLength - 2) {
 			$segments = 100;
-		} else if ($length > $this -> getSuitableHashLength($radius) - 1) {
+		} else if ($length > $suitableLength - 1) {
 			$segments = 50;
 		} else {
 			// we don't seem to care about detail

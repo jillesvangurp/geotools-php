@@ -147,7 +147,7 @@ class GeoHashTest extends PHPUnit_Framework_TestCase {
 	}
 
 	function testShouldReturnSuitableLength() {
-		$this -> assertEquals(4, $this -> geohash -> getSuitableHashLength(11000));
+		$this -> assertEquals(5, $this -> geohash -> getSuitableHashLength(11000,50,13));
 	}
 
 	function testShouldReturn32SubHashes() {
