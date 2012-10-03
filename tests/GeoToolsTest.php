@@ -189,8 +189,8 @@ class GeoHashTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testShouldConvertNonDecimalDegree() {
-		$this->assertEquals($this->geogeometry->toDecimalDegree("W",111,38,45.40), 111.64594444444445);
-		$this->assertEquals($this->geogeometry->toDecimalDegree("E",111,38,45.40), -111.64594444444445);
+		$this->assertEquals($this->geogeometry->toDecimalDegree("W",111,38,45.40), -111.64594444444445);
+		$this->assertEquals($this->geogeometry->toDecimalDegree("E",111,38,45.40), 111.64594444444445);
 	}
 }
 ?>

@@ -391,12 +391,11 @@ class GeoGeometry {
     function toDecimalDegree($direction,$degrees, $minutes, $seconds) {
         $factor=1;
 		
-        if($direction &&  (strcmp(strtolower($direction[0]),'e')==0  || strcmp(strtolower($direction[0]),'s')==0)) {
+        if($direction &&  (strcmp(strtolower($direction[0]),'w')==0  || strcmp(strtolower($direction[0]),'s')==0)) {
             $factor=-1;
         }
         return ($degrees + $minutes/60 + $seconds/60/60)*$factor;
     }
-
 }
 
 class GeoHash {
