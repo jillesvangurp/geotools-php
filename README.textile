@@ -1,6 +1,8 @@
 h1. Introduction
 
-This is a php port of my geotools project, which was written in Java. This is my first attempt at doing anything in php so, beware minor code issues resulting from that.
+Note. no longer updating this sinec 2012 as I generally don't touch anything php these days.
+
+This is a php port of my [geogeometry](https://github.com/jillesvangurp/geogeometry) (formerly geotools) project, which was originally written in Java and in Kotlin these days. This is my first attempt at doing anything in php so, beware minor code issues resulting from that. 
 
 phpunit tests are provided.
 
